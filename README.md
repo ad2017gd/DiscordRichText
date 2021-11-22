@@ -26,6 +26,8 @@ Implemented tags:
     - Set different styles: `blink` (to be implemented), `marquee` (moving text/images)
   - [marquee]
     - Alias for [style marquee]
+  - [center]
+    - Alias for [style center]
   - [image src width? height?]
     - Display image. Only `discordapp.com` and `discord.com` domains allowed. Default width and height are 320x180
 
