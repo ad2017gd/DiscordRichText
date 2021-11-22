@@ -58,6 +58,7 @@ const BitFlags = {
     "Style": {
         "Blink": 0b0000000000000001,
         "Marquee": 0b0000000000000010,
+        "Center": 0b0000000000000100,
 
         "Disable": 0b1000000000000000
     },
@@ -213,6 +214,15 @@ function parseToRichText(x) {
                 }
                 break;
             }
+            case "center": {
+                if (!p1) {
+                    return makeStyle(Formats.Style, { style: ["Center"] });
+                } else {
+                    return makeStyle(Formats.Style, { style: ["Center"], disable: 1 });
+                    
+                }
+                break;
+            }
             case "highlight": {
                 if (!p1) {
                     return makeStyle(Formats.Highlight, { color: parseInt(argument[1].replace(/\#/g, ""), 16) });
@@ -280,6 +290,12 @@ function parseRichText(x) {
                         if (fmt & BitFlags.Style.Disable) {
                             if (lol != -1) toClose = (toClose.filter((v, index) => index !== lol, 1).reverse())
                         } else { toClose.push("marquee") }
+                    } else if (fmt & BitFlags.Style.Center) {
+                        formatted += fmt & BitFlags.Style.Disable ? "</rtcenter>" : "<rtcenter style=\"display: block; text-align: center;\">"
+                        let lol = toClose.reverse().findIndex(x => x == "rtcenter");
+                        if (fmt & BitFlags.Style.Disable) {
+                            if (lol != -1) toClose = (toClose.filter((v, index) => index !== lol, 1).reverse())
+                        } else { toClose.push("rtcenter") }
                     }
                     break;
                 }
@@ -301,7 +317,7 @@ function parseRichText(x) {
                     } if (fmt & BitFlags.Reset.Highlight) {
                         formatted += "</rthighlight>";
                     } if (fmt & BitFlags.Reset.Style) {
-                        formatted += "</blink></marquee>";
+                        formatted += "</blink></marquee></rtcenter>";
                     } if (fmt & BitFlags.Reset.Size) {
                         formatted += "</rtsize>";
                     }
@@ -382,9 +398,10 @@ module.exports = class ExamplePlugin {
         // FUCK YOU! VANILLA PLUGIN
         //if (!global.ZeresPluginLibrary) return window.BdApi.alert("Library Missing", `The library plugin needed for ${this.getName()} is missing.<br /><br /> <a href="https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js" target="_blank">Click here to download the library!</a>`);
         if (this.messageObserver) this.messageObserver.disconnect();
+        this.onstart();
 
     }
-    load() {
+    onstart() {
         var send = send || XMLHttpRequest.prototype.send;
         XMLHttpRequest.prototype.send = function () {
             try {
