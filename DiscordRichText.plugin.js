@@ -195,15 +195,21 @@ function parseToRichText(x) {
                 if (!p1) {
                     const capitalize = s => s && s[0].toUpperCase() + s.slice(1)
                     styles.push(capitalize(argument[1]));
-                    console.log("AA2", styles);
-                    console.log(num_base16d(makeStyle(Formats.Style, { style: [capitalize(argument[1])] })));
                     return makeStyle(Formats.Style, { style: [capitalize(argument[1])] });
                 } else {
-                    console.log("AA", styles);
                     if (styles.length > 0) {
                         console.log(styles);
                         return makeStyle(Formats.Style, { style: [styles.pop()], disable: 1 });
                     }
+                }
+                break;
+            }
+            case "marquee": {
+                if (!p1) {
+                    return makeStyle(Formats.Style, { style: ["Marquee"] });
+                } else {
+                    return makeStyle(Formats.Style, { style: ["Marquee"], disable: 1 });
+                    
                 }
                 break;
             }
