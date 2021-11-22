@@ -48,8 +48,6 @@ Implemented tags:
 [/center]
 
 [marquee]------Have fun!------[/marquee]
-
-Have fun!
 ```
 ![image](https://user-images.githubusercontent.com/39013925/142909921-4a33db02-68ac-4a35-90de-53eadc6b8c13.png)
 
