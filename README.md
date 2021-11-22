@@ -23,7 +23,7 @@ Implemented tags:
   - [highlight #hex]
     - Set text highlight in hex
   - [style name]
-    - Set different styles: `blink` (to be implemented), `marquee` (moving text/images)
+    - Set different styles: `blink` (to be implemented), `marquee` (moving text/images), `center` (center objects)
   - [marquee]
     - Alias for [style marquee]
   - [center]
