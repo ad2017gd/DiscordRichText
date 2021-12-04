@@ -4,8 +4,7 @@ Works using custom-made invisible base16 encoder and decoder.
 (`num_base16e`, `ascii_base16d` etc.)
 
 ## Usage
-All formatted messages must be preceded by the `[formatted]` tag. If not, the other tags will still be parsed, but they won't work.
-
+All formatted messages must be preceded by the `[formatted]` tag.
 Implemented tags:
   - [h1], [h2], [h3], [h4]
     - Aliases for [size], but with different sizes
