@@ -132,10 +132,10 @@ function makeStyle(format, options) {
 }
 
 function parseToRichText(x) {
+    if(!x.startsWith("[formatted]")) return x;
     let regex = /(?<!(?<!\\)\\)(?:(?:\[(\/?[^\[\]]+)(?!\\)\]))/g;
     let styles = [];
     let command = x.replace(regex, (match, p, off, str) => {
-        console.log(p);
         let argument = p.match(/("[^"]+"|[^\s"]+)/g);
         let cmd = argument[0].startsWith("/") ? argument[0].substring(1) : argument[0];
         let p1 = argument[0].startsWith("/") ? true : false;
@@ -249,7 +249,6 @@ function parseToRichText(x) {
     return command;
 }
 function parseRichText(x) {
-    console.log("penis", x);
     let regex = /(?:[^\u2060\u2061\u2062\u2063\u2064\u2065\u2068\u2069\u206A\u206B\u206C\u206D\u206E\u206F\u200B\u200C\uFEFF]+)|(?:([\u2060\u2061\u2062\u2063\u2064\u2065\u2068\u2069\u206A\u206B\u206C\u206D\u206E\u206F\u200B\u200C]+\uFEFF)(\uFEFF[\u2060\u2061\u2062\u2063\u2064\u2065\u2068\u2069\u206A\u206B\u206C\u206D\u206E\u206F\u200B\u200C]+\uFEFF)?)/g;
     let commands = x.matchAll(regex);
     if (commands == null || commands == undefined) throw "Unable to parse rich text : no matches";
@@ -371,7 +370,6 @@ function patchMessage(n) {
     }
     if (content != undefined) {
         if (content.innerHTML.startsWith(makeStyle(Formats.Formatted, {}))) {
-            console.log("FORMATTED MESSAGE!");
             content.innerHTML = parseRichText(content.innerHTML);
         }
     }
@@ -382,7 +380,6 @@ function patchMessages(n) {
     let messages = $(n).find('[id^="message-content-"]');
     for (m of messages) {
         if (m.innerHTML.startsWith(makeStyle(Formats.Formatted, {}))) {
-            console.log("FORMATTED MESSAGE!");
             m.innerHTML = parseRichText(m.innerHTML);
         }
     }
@@ -437,14 +434,16 @@ module.exports = class ExamplePlugin {
                 this.messageObserver = new MutationObserver(mutations => {
                     for (let i = 0; i < mutations.length; i++) {
                         if (mutations[i].addedNodes[0]) {
-                            if (mutations[i].addedNodes[0].className.startsWith("chatContent-")) patchMessages(mutations[i].addedNodes[0]);
-                            if (mutations[i].addedNodes[0].id.startsWith("chat-messages-") || mutations[i].addedNodes[0].id.startsWith("message-content-")) patchMessage(mutations[i].addedNodes[0]);
+                            try {
+                                if (mutations[i].addedNodes[0].className.startsWith("chatContent-")) patchMessages(mutations[i].addedNodes[0]);
+                                if (mutations[i].addedNodes[0].id.startsWith("chat-messages-") || mutations[i].addedNodes[0].id.startsWith("message-content-")) patchMessage(mutations[i].addedNodes[0]);
+                            } catch (e) {}
                         }
                     }
                 });
 
                 this.messageObserver.observe($('[class^="content"]')[0], { childList: true, subtree: true });
-            } catch (e) { console.log(e) }
+            } catch (e) { }
         }, 500)
     }
     unload() {
