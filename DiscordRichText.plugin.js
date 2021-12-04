@@ -8,6 +8,7 @@
  * Discord, seamless to vanilla users.
  * @website https://ad2017.dev
  * @donate https://paypal.me/ad2k17
+ * @updateUrl https://github.com/ad2017gd/DiscordRichText/raw/main/DiscordRichText.plugin.js
  */
 
 
