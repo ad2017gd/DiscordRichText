@@ -1,6 +1,6 @@
 /**
  * @name DiscordRichText
- * @version 0.0.1
+ * @version 0.0.2
  * @author ad2017
  * @authorId 288314320033546241
  * @authorLink https://ad2017.dev
@@ -132,7 +132,9 @@ function makeStyle(format, options) {
 }
 
 function parseToRichText(x) {
-    if(!x.startsWith("[formatted]")) return x;
+    if(!x.startsWith("[formatted]")) {return x;}
+	console.log(x);
+    
     let regex = /(?<!(?<!\\)\\)(?:(?:\[(\/?[^\[\]]+)(?!\\)\]))/g;
     let styles = [];
     let command = x.replace(regex, (match, p, off, str) => {
@@ -200,7 +202,6 @@ function parseToRichText(x) {
                     return makeStyle(Formats.Style, { style: [capitalize(argument[1])] });
                 } else {
                     if (styles.length > 0) {
-                        console.log(styles);
                         return makeStyle(Formats.Style, { style: [styles.pop()], disable: 1 });
                     }
                 }
@@ -257,9 +258,7 @@ function parseRichText(x) {
     toClose = [];
 
     for (const cmd of commands) {
-        console.log(cmd)
         if (cmd[1] != undefined) {
-            //console.log(num_base16d(cmd[1]) & 0xFF)
             switch (num_base16d(cmd[1]) & 0xFF) {
                 case Formats.Color: {
                     let fmt = num_base16d(cmd[1]);
@@ -325,9 +324,7 @@ function parseRichText(x) {
                 }
                 case Formats.Image: {
                     let fmt = num_base16d(cmd[1]);
-                    console.log(fmt.toString(16))
                     fmt = fmt >> 8 & 0xFFFFFF >>> 0;
-                    console.log(fmt.toString(16))
                     if (!cmd[2]) continue;
                     let width = fmt >> 12 & 0xFFF;
                     if (width == 0) width = 320;
@@ -335,7 +332,6 @@ function parseRichText(x) {
                     if (height == 0) height = 180;
 
                     let src = ascii_base16d(cmd[2].slice(1, -1)).replace(/"/g, "");
-                    console.log(src);
                     let url = (new URL(src));
 
                     if (url.hostname == "cdn.discordapp.com" || url.hostname == "cdn.discord.com" || url.hostname == "media.discordapp.net") {
@@ -363,7 +359,6 @@ function parseRichText(x) {
 }
 
 function patchMessage(n) {
-    console.log(n);
     let content = n;
     if (content.id.startsWith("chat-messages-")) {
         content = $(content).find('[id^="message-content-"]')[0];
@@ -388,7 +383,7 @@ function patchMessages(n) {
 
 
 
-module.exports = class ExamplePlugin {
+module.exports = class DiscordRichText {
     messageObserver = null;
 
     start() {
@@ -405,7 +400,6 @@ module.exports = class ExamplePlugin {
             try {
                 let tmp = arguments;
                 if (arguments[0] == undefined || arguments[0] == null) { send.call(this, ...arguments); return; }
-                console.log(arguments[0]);
                 let tmp2 = JSON.parse(arguments[0]);
                 if (tmp2 == null) { send.call(this, ...arguments); return; }
                 if (tmp2.content == undefined || tmp2.content == null) { send.call(this, ...arguments); return; }
@@ -414,8 +408,6 @@ module.exports = class ExamplePlugin {
                 send.call(this, ...tmp);
             } catch (er) {
                 send.call(this, ...arguments);
-                console.log(er);
-
             }
         }
 
