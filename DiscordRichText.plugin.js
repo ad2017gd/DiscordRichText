@@ -144,6 +144,7 @@ function parseToRichText(x) {
 
         switch (cmd) {
             case "formatted": {
+                console.log("dada");
                 return makeStyle(Formats.Formatted, {});
             }
             case "h1": {
@@ -361,7 +362,7 @@ function parseRichText(x) {
 function patchMessage(n) {
     let content = n;
     if (content.id.startsWith("chat-messages-")) {
-        content = $(content).find('[id^="message-content-"]')[0];
+        content = content.querySelector('[id^="message-content-"]');
     }
     if (content != undefined) {
         if (content.innerHTML.startsWith(makeStyle(Formats.Formatted, {}))) {
@@ -372,7 +373,7 @@ function patchMessage(n) {
 }
 
 function patchMessages(n) {
-    let messages = $(n).find('[id^="message-content-"]');
+    let messages = content.querySelector('[id^="message-content-"]');
     for (m of messages) {
         if (m.innerHTML.startsWith(makeStyle(Formats.Formatted, {}))) {
             m.innerHTML = parseRichText(m.innerHTML);
@@ -387,9 +388,6 @@ module.exports = class DiscordRichText {
     messageObserver = null;
 
     start() {
-
-        // FUCK YOU! VANILLA PLUGIN
-        //if (!global.ZeresPluginLibrary) return window.BdApi.alert("Library Missing", `The library plugin needed for ${this.getName()} is missing.<br /><br /> <a href="https://betterdiscord.net/ghdl?url=https://raw.githubusercontent.com/rauenzi/BDPluginLibrary/master/release/0PluginLibrary.plugin.js" target="_blank">Click here to download the library!</a>`);
         if (this.messageObserver) this.messageObserver.disconnect();
         this.onstart();
 
@@ -412,14 +410,6 @@ module.exports = class DiscordRichText {
         }
 
         if (this.messageObserver) this.messageObserver.disconnect();
-        try { jQuery } catch (a) {
-
-            // almost
-            var script = document.createElement('script');
-            script.src = 'https://code.jquery.com/jquery-3.4.1.min.js';
-            script.type = 'text/javascript';
-            document.getElementsByTagName('head')[0].appendChild(script);
-        }
         setTimeout(() => {
             try {
 
@@ -434,7 +424,7 @@ module.exports = class DiscordRichText {
                     }
                 });
 
-                this.messageObserver.observe($('[class^="content"]')[0], { childList: true, subtree: true });
+                this.messageObserver.observe(document.querySelector('[class^="content"]'), { childList: true, subtree: true });
             } catch (e) { }
         }, 500)
     }
